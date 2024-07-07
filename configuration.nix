@@ -10,6 +10,7 @@
     [
       ./hardware-configuration.nix
       ./apple-silicon-support
+      <home-manager/nixos>
     ];
 
   hardware.asahi.peripheralFirmwareDirectory = ./firmware;
@@ -35,7 +36,24 @@
     gitMinimal
     lazygit
     sioyek
+    wget
   ];
+
+  # home-manager.useGlobalPkgs = true;
+  users.users.user = {
+    isNormalUser = true;
+    home = "/home/user";
+    extraGroups = [ "wheel" ];
+  };
+  home-manager.useGlobalPkgs = true;
+  home-manager.users.user = { pkgs, ... }: {
+    dconf = {
+      enable = true;
+      settings."org/gnome/desktop/interface".color-scheme = "prefer-dark";
+    };
+
+    home.stateVersion = "24.11"; # Did you read the comment?
+  };
 
   programs.neovim = {
     enable = true;
@@ -73,7 +91,7 @@
      # Valid strings for installation_mode are "allowed", "blocked",
      # "force_installed" and "normal_installed".
      ExtensionSettings = {
-       "*".installation_mode = "blocked"; # blocks all addons except the ones specified below
+       # "*".installation_mode = "blocked"; # blocks all addons except the ones specified below
        "uBlock0@raymondhill.net" = {
          install_url = "https://addons.mozilla.org/firefox/downloads/latest/ublock-origin/latest.xpi";
          installation_mode = "force_installed";
@@ -92,7 +110,7 @@
     displayManager.gdm.enable = true;
     desktopManager.gnome.enable = true;
   };
-  services.xserver.xkb.layout = "us,no";
+  services.xserver.xkb.layout = "us";
   services.xserver.videoDrivers = [ "displaylink" "modesetting" ]; # https://nixos.wiki/wiki/Displaylink
 
   environment.gnome.excludePackages = (with pkgs; [
@@ -100,29 +118,32 @@
     gnome-tour
     gnome-connections
     gnome-console
-    gedit
-  ]) ++ (with pkgs.gnome; [
-    gnome-contacts
-    gnome-weather
     gnome-calculator
     gnome-calendar
     gnome-system-monitor 
-    gnome-maps
-    gnome-music
     gnome-terminal
-    gnome-characters
-    cheese # webcam tool
+    gedit
     epiphany # web browser
+    cheese # webcam tool
     geary # email reader
     evince # document viewer
     totem # video player
+    yelp # gnome help
+    simple-scan # document scanner
+    file-roller
+  ]) ++ (with pkgs.gnome; [
+    gnome-contacts
+    gnome-weather
+    gnome-maps
+    gnome-music
+    gnome-characters
     tali # poker game
     iagno # go game
     hitori # sudoku game
     atomix # puzzle game
-    yelp # gnome help
-    simple-scan # document scanner
   ]);
+
+
 
   # Some programs need SUID wrappers, can be configured further or are
   # started in user sessions.
