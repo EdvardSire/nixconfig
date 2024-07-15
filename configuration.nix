@@ -37,6 +37,7 @@
     lazygit
     sioyek
     wget
+    xsel
   ];
 
   # home-manager.useGlobalPkgs = true;
@@ -49,8 +50,31 @@
   home-manager.users.user = { pkgs, ... }: {
     dconf = {
       enable = true;
-      settings."org/gnome/desktop/interface".color-scheme = "prefer-dark";
+      settings = {
+        "org/gnome/mutter" = {
+          experimental-features = [ "scale-monitor-framebuffer" ];
+        };
+        "org/gnome/desktop/interface" = {
+          color-scheme = "prefer-dark";
+        };
+      };
     };
+
+    programs.neovim = {
+      extraLuaConfig = ''
+      :luafile ~/.config/nvim/init.lua
+      '';
+    };
+
+    # xdg.configFile.nvim = {
+    #   source = ./config;
+    #   recursive = true;
+    # };
+    # home.file = lib.mapAttrs (name: type: {
+    #   source = ./dotfiles/${name};
+    #   recursive = type == "directory";
+    # }) (builtins.readDir ./dotfiles);
+
 
     home.stateVersion = "24.11"; # Did you read the comment?
   };
