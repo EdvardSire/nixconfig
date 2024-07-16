@@ -27,6 +27,23 @@
     settings.General.EnableNetworkConfiguration = true;
   };
 
+  networking.wg-quick.interfaces = {
+    wg0 = {
+      address = [ "10.0.0.2/24" ];
+      dns = [ "192.168.1.1" ];
+      privateKeyFile = "/home/user/wireguard-keys/private";
+
+      peers = [
+        {
+          publicKey = "Yf4EHYENC7VLrS1xrTuMQ3eGFgcjr4QglMCauj5bcDw=";
+          allowedIPs = [ "0.0.0.0/0" ];
+          endpoint = "pi.edvardsire.com:23";
+          persistentKeepalive = 25;
+        }
+      ];
+    };
+  };
+
   environment.systemPackages = with pkgs; [
     tree
     htop
@@ -38,6 +55,7 @@
     sioyek
     wget
     xsel
+    wireguard-tools
   ];
 
   # home-manager.useGlobalPkgs = true;
