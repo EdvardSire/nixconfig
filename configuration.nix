@@ -27,8 +27,12 @@
     settings.General.EnableNetworkConfiguration = true;
   };
 
+  virtualisation.docker.enable = true;
+  users.extraGroups.docker.members = [ "user" ];
+
   networking.wg-quick.interfaces = {
     wg0 = {
+      autostart = true;
       address = [ "10.0.0.2/24" ];
       dns = [ "192.168.1.1" ];
       privateKeyFile = "/home/user/wireguard-keys/private";
@@ -56,6 +60,16 @@
     wget
     xsel
     wireguard-tools
+    cmake
+    gcc14
+    ripgrep
+    nmap
+    libreoffice-qt6-fresh
+    ruff
+    #LSP
+    ruff-lsp
+    clang-tools
+    pyright
   ];
 
   # home-manager.useGlobalPkgs = true;
@@ -65,7 +79,7 @@
     extraGroups = [ "wheel" ];
   };
   home-manager.useGlobalPkgs = true;
-  home-manager.users.user = { pkgs, ... }: {
+  home-manager.users.user = { pkgs, config, ... }: {
     dconf = {
       enable = true;
       settings = {
@@ -78,21 +92,8 @@
       };
     };
 
-    programs.neovim = {
-      extraLuaConfig = ''
-      :luafile ~/.config/nvim/init.lua
-      '';
-    };
-
-    # xdg.configFile.nvim = {
-    #   source = ./config;
-    #   recursive = true;
-    # };
-    # home.file = lib.mapAttrs (name: type: {
-    #   source = ./dotfiles/${name};
-    #   recursive = type == "directory";
-    # }) (builtins.readDir ./dotfiles);
-
+    home.file.".gitconfig".source = config.lib.file.mkOutOfStoreSymlink "/home/user/dotfiles/.gitconfig";
+    home.file.".config/nvim".source = config.lib.file.mkOutOfStoreSymlink "/home/user/dotfiles/nvim";
 
     home.stateVersion = "24.11"; # Did you read the comment?
   };
@@ -100,6 +101,7 @@
   programs.neovim = {
     enable = true;
     defaultEditor = true;
+
   };
 
   programs.firefox = {
@@ -183,6 +185,8 @@
     iagno # go game
     hitori # sudoku game
     atomix # puzzle game
+  ]) ++ (with pkgs; [
+    sushi # file preview
   ]);
 
 
