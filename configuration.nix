@@ -66,6 +66,7 @@
     nmap
     libreoffice-qt6-fresh
     ruff
+    file
     #LSP
     ruff-lsp
     clang-tools
