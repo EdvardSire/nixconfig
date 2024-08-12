@@ -67,6 +67,8 @@
     libreoffice-qt6-fresh
     ruff
     file
+    vlc
+    jq
     #LSP
     ruff-lsp
     clang-tools
@@ -95,6 +97,7 @@
 
     home.file.".gitconfig".source = config.lib.file.mkOutOfStoreSymlink "/home/user/dotfiles/.gitconfig";
     home.file.".config/nvim".source = config.lib.file.mkOutOfStoreSymlink "/home/user/dotfiles/nvim";
+    home.file.".bashrc".source = config.lib.file.mkOutOfStoreSymlink "/home/user/dotfiles/bash/bashrc";
 
     home.stateVersion = "24.11"; # Did you read the comment?
   };
@@ -189,7 +192,6 @@
   ]) ++ (with pkgs; [
     sushi # file preview
   ]);
-
 
 
   # Some programs need SUID wrappers, can be configured further or are
