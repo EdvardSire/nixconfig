@@ -22,6 +22,7 @@
   hardware.asahi.peripheralFirmwareDirectory = ./firmware;
   hardware.asahi.useExperimentalGPUDriver = true;
   hardware.asahi.setupAsahiSound = true;
+  hardware.spacenavd.enable = true;
 
   boot.loader.systemd-boot.enable = true;
   boot.loader.efi.canTouchEfiVariables = false;
@@ -68,6 +69,9 @@
     thunderbird
     libreoffice-qt6-fresh
     obsidian
+    gparted
+    qgroundcontrol
+    freecad
   ]) ++ (with pkgs; [
     ruff-lsp
     clang-tools
@@ -163,7 +167,7 @@
   users.users.user = {
     isNormalUser = true;
     home = "/home/user";
-    extraGroups = [ "wheel" ];
+    extraGroups = [ "wheel" "dialout" ];
   };
   home-manager.useGlobalPkgs = true;
   home-manager.users.user = { pkgs, config, ... }: {
