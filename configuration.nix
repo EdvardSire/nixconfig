@@ -27,10 +27,16 @@
   boot.loader.systemd-boot.enable = true;
   boot.loader.efi.canTouchEfiVariables = false;
 
+  swapDevices = [ {
+    device = "/var/lib/swapfile";
+    size = 2048;
+  } ];
+
   services.xserver = {
     enable = true;
     displayManager.gdm.enable = true;
     desktopManager.gnome.enable = true;
+
   };
   services.xserver.xkb.layout = "us";
   services.xserver.videoDrivers =
@@ -63,6 +69,10 @@
     zip
     unzip
     rsync
+    calculix
+    gmsh
+    spacenavd
+    nodejs_18
   ]) ++ (with pkgs; [
     terminator
     sioyek
@@ -72,6 +82,8 @@
     gparted
     qgroundcontrol
     freecad
+    qgis
+    eog
   ]) ++ (with pkgs; [
     ruff-lsp
     clang-tools
@@ -179,6 +191,9 @@
           experimental-features = [ "scale-monitor-framebuffer" ];
         };
         "org/gnome/desktop/interface" = { color-scheme = "prefer-dark"; };
+        "org/gnome/desktop/remote-desktop/rdp" = {
+          screen-share-mode = "extend";
+        };
         "org/gnome/shell" = {
         };
       };
