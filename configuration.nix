@@ -18,6 +18,9 @@
     enable = true;
     settings.General.EnableNetworkConfiguration = true;
   };
+  networking.firewall.allowedTCPPorts = [ 3389 ];
+  networking.firewall.allowedUDPPorts = [ 3389 ];
+
 
   hardware.asahi.peripheralFirmwareDirectory = ./firmware;
   hardware.asahi.useExperimentalGPUDriver = true;
@@ -38,6 +41,7 @@
     desktopManager.gnome.enable = true;
 
   };
+
   services.xserver.xkb.layout = "us";
   services.xserver.videoDrivers =
     [ "displaylink" "modesetting" ]; # https://nixos.wiki/wiki/Displaylink
