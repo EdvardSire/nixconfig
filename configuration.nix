@@ -1,5 +1,5 @@
-# Edit this configuration file to define what should be installed on
-# your system. Help is available in the configuration.nix(5) man page, on
+# Edit this configuration file to define what should be installed on your
+# system. Help is available in the configuration.nix(5) man page, on
 # https://search.nixos.org/options and in the NixOS manual (`nixos-help`).
 
 { config, lib, pkgs, ... }:
@@ -7,9 +7,8 @@
 {
   nixpkgs.config.allowUnfree = true;
   imports = [
-    ./hardware-configuration.nix
-    ./apple-silicon-support
-    <home-manager/nixos>
+      ./hardware-configuration.nix
+      ./apple-silicon-support 
   ];
 
   time.timeZone = "Europe/Oslo";
@@ -21,36 +20,26 @@
   networking.firewall.allowedTCPPorts = [ 3389 ];
   networking.firewall.allowedUDPPorts = [ 3389 ];
 
-
   hardware.asahi.peripheralFirmwareDirectory = ./firmware;
   hardware.asahi.useExperimentalGPUDriver = true;
   hardware.asahi.setupAsahiSound = true;
   hardware.spacenavd.enable = true;
 
   boot.loader.systemd-boot.enable = true;
-  boot.loader.efi.canTouchEfiVariables = false;
+  boot.loader.efi.canTouchEfiVariables = true;
 
   swapDevices = [ {
-    device = "/var/lib/swapfile";
-    size = 2048;
+	  device = "/var/lib/swapfile";
+	  size = 20480;
   } ];
 
   services.xserver = {
     enable = true;
     displayManager.gdm.enable = true;
     desktopManager.gnome.enable = true;
-
-  };
+  };  
 
   services.xserver.xkb.layout = "us";
-  services.xserver.videoDrivers =
-    [ "displaylink" "modesetting" ]; # https://nixos.wiki/wiki/Displaylink
-
-  virtualisation.docker.enable = true;
-  users.extraGroups.docker.members = [ "user" ];
-
-  networking.wg-quick.interfaces.wg0.configFile =
-    "/etc/nixos/files/wireguard/wg0.conf";
 
   environment.sessionVariables.NIXOS_OZONE_WL = 1;
   environment.systemPackages = (with pkgs; [
@@ -64,24 +53,24 @@
     wireguard-tools
     ripgrep
     nmap
-    ruff
     file
-    vlc
     jq
-    eyedropper
-    typer
     zip
     unzip
     rsync
-    calculix
-    gmsh
+    typer
     spacenavd
     nodejs_18
+    gcc
+    calculix # for freecad
+    gmsh # for freecad
   ]) ++ (with pkgs; [
     terminator
     sioyek
     thunderbird
-    libreoffice-qt6-fresh
+    vlc
+    eyedropper
+    # libreoffice-qt6-fresh
     obsidian
     gparted
     qgroundcontrol
@@ -89,12 +78,11 @@
     qgis
     eog
   ]) ++ (with pkgs; [
-    ruff-lsp
+    ruff
     clang-tools
     pyright
   ]) ++ (with pkgs; [
     gnome-calculator
-    gnomeExtensions.vitals
   ]);
 
   programs.neovim = {
@@ -150,6 +138,7 @@
   };
 
   services.gnome.sushi.enable = true;
+  services.gnome.gnome-remote-desktop.enable = true;
   environment.gnome.excludePackages = (with pkgs; [
     gnome-photos
     gnome-tour
@@ -178,45 +167,22 @@
     iagno # go game
     hitori # sudoku game
     atomix # puzzle game
-  ]); 
+  ]);
 
   users.users.user = {
     isNormalUser = true;
     home = "/home/user";
     extraGroups = [ "wheel" "dialout" ];
   };
-  home-manager.useGlobalPkgs = true;
-  home-manager.users.user = { pkgs, config, ... }: {
 
-    dconf = {
-      enable = true;
-      settings = {
-        "org/gnome/mutter" = {
-          experimental-features = [ "scale-monitor-framebuffer" ];
-        };
-        "org/gnome/desktop/interface" = { color-scheme = "prefer-dark"; };
-        "org/gnome/desktop/remote-desktop/rdp" = {
-          screen-share-mode = "extend";
-        };
-        "org/gnome/shell" = {
-        };
-      };
-    };
-
-    home.sessionVariables.NIXOS_OZONE_WL = "1";
-
-    home.file.".gitconfig".source =
-      config.lib.file.mkOutOfStoreSymlink "/home/user/dotfiles/.gitconfig";
-    home.file.".config/nvim".source =
-      config.lib.file.mkOutOfStoreSymlink "/home/user/dotfiles/nvim";
-    home.file.".bashrc".source =
-      config.lib.file.mkOutOfStoreSymlink "/home/user/dotfiles/bash/bashrc";
-
-    home.stateVersion = "24.11"; # Did you read the comment?
-  };
-
-
-  ### 
+  # This value does NOT affect the Nixpkgs version your packages and OS are pulled from, so changing it will NOT upgrade your system - see 
+  # https://nixos.org/manual/nixos/stable/#sec-upgrading for how to actually do that.
+  #
+  # This value being lower than the current NixOS release does NOT mean your system is out of date, out of support, or vulnerable.
+  #
+  # Do NOT change this value unless you have manually inspected all the changes it would make to your configuration, and migrated your data accordingly.
+  #
+  # For more information, see `man configuration.nix` or https://nixos.org/manual/nixos/stable/options#opt-system.stateVersion .
   system.stateVersion = "24.11"; # Did you read the comment?
 
 }
