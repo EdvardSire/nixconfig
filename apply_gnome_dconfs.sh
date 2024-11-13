@@ -19,4 +19,5 @@ dconf write /org/gnome/mutter/experimental-features "['scale-monitor-framebuffer
 dconf write /org/gnome/desktop/interface/color-scheme "'prefer-dark'"
 dconf write /org/gnome/desktop/remote-desktop/rdp/screen-share-mode "'extend'"
 dconf write /org/gnome/desktop/interface/show-battery-percentage true
+dconf write /org/gnome/mutter/workspaces-only-on-primary true
 
