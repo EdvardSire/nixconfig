@@ -3,7 +3,13 @@
 # https://search.nixos.org/options and in the NixOS manual (`nixos-help`).
 
 { config, lib, pkgs, ... }:
-
+let
+    pkgsPersonal = import (builtins.fetchTarball {
+    name = "nixpkgs-edvardsire";
+    url = "https://github.com/EdvardSire/nixpkgs/archive/e7c2769ab31a1c5f5e7cdb360c8a76fd7da2c96e.tar.gz";
+    sha256 = "0mzqmhv1k8vgpn1r42car99kdahs8i80324nwg9vhmkh022hk2bn";
+  }) { };
+in
 {
   nixpkgs.config.allowUnfree = true;
   imports = [
@@ -40,6 +46,7 @@
   };  
 
   services.xserver.xkb.layout = "us";
+  services.xserver.videoDrivers = [ "displaylink" "modesetting" ]; # https://nixos.wiki/wiki/Displaylink
 
   environment.sessionVariables.NIXOS_OZONE_WL = 1;
   environment.systemPackages = (with pkgs; [
@@ -66,11 +73,11 @@
     gmsh # for freecad
   ]) ++ (with pkgs; [
     terminator
-    sioyek
+    pkgsPersonal.sioyek
     thunderbird
     vlc
     eyedropper
-    # libreoffice-qt6-fresh
+    libreoffice-qt6-still
     obsidian
     gparted
     qgroundcontrol
