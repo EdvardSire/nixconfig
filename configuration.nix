@@ -14,7 +14,8 @@ in
   nixpkgs.config.allowUnfree = true;
   imports = [
       ./hardware-configuration.nix
-      ./apple-silicon-support 
+      # ./apple-silicon-support 
+      <apple-silicon-support/apple-silicon-support>
   ];
 
   time.timeZone = "Europe/Oslo";
