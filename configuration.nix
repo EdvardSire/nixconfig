@@ -6,8 +6,8 @@
 let
     pkgsPersonal = import (builtins.fetchTarball {
     name = "nixpkgs-edvardsire";
-    url = "https://github.com/EdvardSire/nixpkgs/archive/e7c2769ab31a1c5f5e7cdb360c8a76fd7da2c96e.tar.gz";
-    sha256 = "0mzqmhv1k8vgpn1r42car99kdahs8i80324nwg9vhmkh022hk2bn";
+    url = "https://github.com/EdvardSire/nixpkgs/archive/f196c4c5b08772db6f078e1ecb395c9a01631ad5.tar.gz";
+    sha256 = "12b79061ai5b8zgqq6gnrfigm52nbvx04j1kdb0bgmsrqws7d3dg";
   }) { };
 in
 {
