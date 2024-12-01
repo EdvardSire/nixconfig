@@ -85,6 +85,7 @@ in
     freecad
     qgis
     eog
+    # rawtherapee
   ]) ++ (with pkgs; [
     ruff
     clang-tools
