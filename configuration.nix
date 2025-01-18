@@ -14,8 +14,8 @@ in
   nixpkgs.config.allowUnfree = true;
   imports = [
       ./hardware-configuration.nix
-      # ./apple-silicon-support 
-      <apple-silicon-support/apple-silicon-support>
+      # ./apple-silicon-support # the local copy-over version for the first generation
+      <apple-silicon-support/apple-silicon-support> # online upstream
   ];
 
   time.timeZone = "Europe/Oslo";
@@ -40,6 +40,11 @@ in
 	  size = 20480;
   } ];
 
+
+  virtualisation.podman = {
+    enable = true;
+    dockerCompat = true;
+  };
   services.xserver = {
     enable = true;
     displayManager.gdm.enable = true;
@@ -47,7 +52,7 @@ in
   };  
 
   services.xserver.xkb.layout = "us";
-  services.xserver.videoDrivers = [ "displaylink" "modesetting" ]; # https://nixos.wiki/wiki/Displaylink
+  # services.xserver.videoDrivers = [ "displaylink" "modesetting" ]; # https://nixos.wiki/wiki/Displaylink
 
   environment.sessionVariables.NIXOS_OZONE_WL = 1;
   environment.systemPackages = (with pkgs; [
@@ -68,10 +73,7 @@ in
     rsync
     typer
     spacenavd
-    nodejs_18
-    gcc
-    calculix # for freecad
-    gmsh # for freecad
+    fzf
   ]) ++ (with pkgs; [
     terminator
     pkgsPersonal.sioyek
@@ -82,11 +84,11 @@ in
     obsidian
     gparted
     qgroundcontrol
-    freecad
-    qgis
     eog
-    # rawtherapee
+    distrobox
   ]) ++ (with pkgs; [
+    gcc
+    nodejs_18
     ruff
     clang-tools
     pyright
@@ -157,16 +159,6 @@ in
     gnome-calendar
     gnome-system-monitor
     gnome-terminal
-    gedit
-    epiphany # web browser
-    cheese # webcam tool
-    geary # email reader
-    evince # document viewer
-    totem # video player
-    yelp # gnome help
-    simple-scan # document scanner
-    file-roller
-  ]) ++ (with pkgs.gnome; [
     gnome-contacts
     gnome-weather
     gnome-maps
@@ -176,7 +168,16 @@ in
     iagno # go game
     hitori # sudoku game
     atomix # puzzle game
-  ]);
+    epiphany # web browser
+    cheese # webcam tool
+    geary # email reader
+    evince # document viewer
+    totem # video player
+    yelp # gnome help
+    simple-scan # document scanner
+    file-roller
+    gedit
+  ]); 
 
   users.users.user = {
     isNormalUser = true;
