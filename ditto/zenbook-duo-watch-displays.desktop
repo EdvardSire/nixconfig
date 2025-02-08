@@ -1,0 +1,5 @@
+[Desktop Entry]
+Type=Application
+Exec=/usr/bin/env /home/user/repos/zenbook-duo-2024-ux8406ma-linux/duo watch-displays
+X-GNOME-Autostart-enabled=true
+
