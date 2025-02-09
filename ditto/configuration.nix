@@ -4,6 +4,13 @@
 
 { config, pkgs, ... }:
 
+let
+    pkgsPersonal = import (builtins.fetchTarball {
+    name = "nixpkgs-edvardsire";
+    url = "https://github.com/EdvardSire/nixpkgs/archive/dc6b3d3775457d507e130aa6f2eba582d90b23ce.tar.gz";
+    sha256 = "1r5bn10vd938c0vkah5q35rdh5zacl2hrz4dwdv6pypmz94xkjgf";
+  }) { };
+in
 {
   nixpkgs.config.allowUnfree = true;
   imports = [ 
@@ -30,6 +37,10 @@
   boot.loader.systemd-boot.enable = true;
   boot.loader.efi.canTouchEfiVariables = true;
 
+  swapDevices = [{
+	  device = "/var/lib/swapfile";
+	  size = 2048;
+  }];
 
   services.xserver = {
     enable = true;
@@ -60,12 +71,18 @@
     rsync
   ]) ++ (with pkgs; [
     terminator
+    pkgsPersonal.sioyek
     xournalpp
     thunderbird
     obsidian
     vlc
     eog
     gparted
+  ]) ++ (with pkgs; [
+    # https://github.com/alesya-h/zenbook-duo-2024-ux8406ma-linux
+    inotify-tools
+    gnome-monitor-config 
+    usbutils
   ]);
 
   programs.neovim = {
@@ -154,6 +171,26 @@
     isNormalUser = true;
     home = "/home/user";
     extraGroups = [ "networkmanager" "wheel" ];
+  };
+
+  security.sudo = {
+    enable = true;
+    extraRules = [{
+      commands = [
+        {
+          command = "/usr/bin/env";
+          options = [ "NOPASSWD" ];
+        }
+      ];
+      groups = [ "wheel" ];
+    }];
+  };
+
+  programs.steam = {
+    enable = true;
+    remotePlay.openFirewall = true; # Open ports in the firewall for Steam Remote Play
+    dedicatedServer.openFirewall = true; # Open ports in the firewall for Source Dedicated Server
+    localNetworkGameTransfers.openFirewall = true; # Open ports in the firewall for Steam Local Network Game Transfers
   };
 
   # This value determines the NixOS release from which the default
