@@ -20,11 +20,19 @@ in
   time.timeZone = "Europe/Oslo";
   i18n.defaultLocale = "en_US.UTF-8";
 
-  networking.hostName = "ditto";
-  networking.networkmanager.enable = true;
-  hardware.bluetooth.enable = true;
-  hardware.bluetooth.powerOnBoot = true;
-  hardware.pulseaudio.enable = false;
+  networking = {
+    hostName = "ditto";
+    networkmanager.enable = true;
+  };
+  
+  hardware = {
+    bluetooth = {
+      enable = true;
+      powerOnBoot = true;
+    };
+    pulseaudio.enable = false;
+  };
+
   security.rtkit.enable = true;
   services.pipewire = {
     enable = true;
@@ -33,9 +41,11 @@ in
     pulse.enable = true;
   };
 
-  boot.kernelPackages = pkgs.linuxPackages_6_11;
-  boot.loader.systemd-boot.enable = true;
-  boot.loader.efi.canTouchEfiVariables = true;
+  boot = {
+    kernelPackages = pkgs.linuxPackages_6_11;
+    loader.systemd-boot.enable = true;
+    loader.efi.canTouchEfiVariables = true;
+  };
 
   swapDevices = [{
 	  device = "/var/lib/swapfile";
@@ -44,15 +54,11 @@ in
 
   services.xserver = {
     enable = true;
+    layout = "us";
+    variant = "";
     displayManager.gdm.enable = true;
     desktopManager.gnome.enable = true;
   };
-  services.xserver.xkb = {
-    layout = "us";
-    variant = "";
-  };
-
-  services.printing.enable = true;
 
   environment.sessionVariables.NIXOS_OZONE_WL = 1;
   environment.systemPackages = (with pkgs; [
