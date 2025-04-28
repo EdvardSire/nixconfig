@@ -92,6 +92,7 @@ in
     ripgrep
     pdftk
     imagemagick_light
+    config.boot.kernelPackages.perf
   ]) ++ (with pkgs; [
     terminator
     pkgsPersonal.sioyek
