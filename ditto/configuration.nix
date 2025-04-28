@@ -16,6 +16,7 @@ in
   imports = [ 
       ./hardware-configuration.nix
   ];
+  nix.settings.experimental-features = [ "nix-command" "flakes" ];
   
   time.timeZone = "Europe/Oslo";
   i18n.defaultLocale = "en_US.UTF-8";
@@ -24,8 +25,18 @@ in
     hostName = "ditto";
     networkmanager.enable = true;
   };
-  
+   
+
   hardware = {
+    opengl = {
+      enable = true;
+      extraPackages = with pkgs; [
+        intel-media-driver
+        vaapiIntel
+        vaapiVdpau
+        libvdpau-va-gl
+      ];
+    };
     bluetooth = {
       enable = true;
       powerOnBoot = true;
@@ -54,10 +65,13 @@ in
 
   services.xserver = {
     enable = true;
-    layout = "us";
-    variant = "";
     displayManager.gdm.enable = true;
     desktopManager.gnome.enable = true;
+    xkb = {
+      layout = "us";
+      variant = "";
+    };
+    excludePackages = [ pkgs.xterm ];
   };
 
   environment.sessionVariables.NIXOS_OZONE_WL = 1;
@@ -75,6 +89,9 @@ in
     zip
     unzip
     rsync
+    ripgrep
+    pdftk
+    imagemagick_light
   ]) ++ (with pkgs; [
     terminator
     pkgsPersonal.sioyek
@@ -83,13 +100,28 @@ in
     obsidian
     vlc
     eog
+    geeqie
     gparted
+    fido2-manage
+  ]) ++ (with pkgs; [
+    pyright
   ]) ++ (with pkgs; [
     # https://github.com/alesya-h/zenbook-duo-2024-ux8406ma-linux
     inotify-tools
     gnome-monitor-config 
     usbutils
+    python312Packages.pyusb
+  ]) ++ (with pkgs; [
+    distrobox
   ]);
+
+  # virtualisation.podman = {
+  #   enable = true;
+  #   dockerCompat = true;
+  # };
+  virtualisation.docker.enable = true;
+  users.extraGroups.docker.members = [ "user" ];
+
 
   programs.neovim = {
     enable = true;
