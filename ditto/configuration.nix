@@ -78,7 +78,6 @@ in
   environment.systemPackages = (with pkgs; [
     tree
     htop
-    python312
     gitMinimal
     lazygit
     wget
@@ -93,6 +92,7 @@ in
     pdftk
     imagemagick_light
     config.boot.kernelPackages.perf
+    vmtouch
   ]) ++ (with pkgs; [
     terminator
     pkgsPersonal.sioyek
@@ -102,10 +102,17 @@ in
     vlc
     eog
     geeqie
+    feh
     gparted
     fido2-manage
   ]) ++ (with pkgs; [
+    python312
+    gcc13
+    nodejs_20
+  ]) ++ (with pkgs; [
     pyright
+    llvmPackages_18.clang-tools
+    vscode-langservers-extracted
   ]) ++ (with pkgs; [
     # https://github.com/alesya-h/zenbook-duo-2024-ux8406ma-linux
     inotify-tools
@@ -129,6 +136,7 @@ in
     defaultEditor = true;
   };
 
+  programs.ladybird.enable = true;
   programs.firefox = {
     enable = true;
     languagePacks = [ "en-US" ];
