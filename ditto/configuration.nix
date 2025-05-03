@@ -3,7 +3,6 @@
 # and in the NixOS manual (accessible by running ‘nixos-help’).
 
 { config, pkgs, ... }:
-
 let
     pkgsPersonal = import (builtins.fetchTarball {
     name = "nixpkgs-edvardsire";
@@ -25,7 +24,6 @@ in
     hostName = "ditto";
     networkmanager.enable = true;
   };
-   
 
   hardware = {
     opengl = {
@@ -93,6 +91,7 @@ in
     imagemagick_light
     config.boot.kernelPackages.perf
     vmtouch
+    fzf
   ]) ++ (with pkgs; [
     terminator
     pkgsPersonal.sioyek
@@ -105,6 +104,7 @@ in
     feh
     gparted
     fido2-manage
+    bruno
   ]) ++ (with pkgs; [
     python312
     gcc13
@@ -129,7 +129,6 @@ in
   # };
   virtualisation.docker.enable = true;
   users.extraGroups.docker.members = [ "user" ];
-
 
   programs.neovim = {
     enable = true;
@@ -247,5 +246,4 @@ in
   # Before changing this value read the documentation for this option
   # (e.g. man configuration.nix or on https://nixos.org/nixos/options.html).
   system.stateVersion = "24.11"; # Did you read the comment?
-
 }
