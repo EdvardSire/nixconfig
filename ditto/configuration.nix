@@ -127,7 +127,9 @@ in
     usbutils
     python312Packages.pyusb
   ]) ++ (with pkgs; [
-    distrobox
+    # distrobox
+    gnome-boxes
+    gnome-connections
   ]);
 
   # virtualisation.podman = {
@@ -135,6 +137,7 @@ in
   #   dockerCompat = true;
   # };
   virtualisation.docker.enable = true;
+  virtualisation.libvirtd.enable = true;
   users.extraGroups.docker.members = [ "user" ];
 
   programs.neovim = {
