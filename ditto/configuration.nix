@@ -14,6 +14,7 @@ in
   nixpkgs.config.allowUnfree = true;
   imports = [ 
       ./hardware-configuration.nix
+      ./cachix.nix
   ];
   nix.settings.experimental-features = [ "nix-command" "flakes" ];
   
