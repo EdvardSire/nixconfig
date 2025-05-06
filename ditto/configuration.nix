@@ -85,6 +85,7 @@ in
     jq
     zip
     unzip
+    ncdu
     rsync
     ripgrep
     pdftk
@@ -92,6 +93,8 @@ in
     config.boot.kernelPackages.perf
     vmtouch
     fzf
+    lf
+    zoxide
   ]) ++ (with pkgs; [
     terminator
     pkgsPersonal.sioyek
@@ -105,6 +108,8 @@ in
     gparted
     fido2-manage
     bruno
+    libreoffice-qt6-still
+    qgis-ltr
   ]) ++ (with pkgs; [
     python312
     gcc13
@@ -113,6 +118,7 @@ in
     pyright
     llvmPackages_18.clang-tools
     vscode-langservers-extracted
+    bash-language-server
   ]) ++ (with pkgs; [
     # https://github.com/alesya-h/zenbook-duo-2024-ux8406ma-linux
     inotify-tools
