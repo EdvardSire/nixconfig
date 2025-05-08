@@ -129,7 +129,7 @@ in
   ]) ++ (with pkgs; [
     # distrobox
     gnome-boxes
-    gnome-connections
+    freerdp3
   ]);
 
   # virtualisation.podman = {
