@@ -98,6 +98,8 @@ in
     zoxide
   ]) ++ (with pkgs; [
     terminator
+    kdePackages.konsole
+  ]) ++ (with pkgs; [
     pkgsPersonal.sioyek
     xournalpp
     thunderbird
@@ -112,7 +114,10 @@ in
     libreoffice-qt6-still
     qgis-ltr
   ]) ++ (with pkgs; [
-    python312
+    (python312.withPackages (subpkgs: with subpkgs; [
+      ipython
+      numpy
+    ]))
     gcc13
     nodejs_20
   ]) ++ (with pkgs; [
@@ -140,6 +145,7 @@ in
   virtualisation.libvirtd.enable = true;
   users.extraGroups.docker.members = [ "user" ];
 
+  programs.kdeconnect.enable = true;
   programs.neovim = {
     enable = true;
     defaultEditor = true;
