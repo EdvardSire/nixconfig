@@ -117,6 +117,7 @@ in
     (python312.withPackages (subpkgs: with subpkgs; [
       ipython
       numpy
+      pyusb # https://github.com/alesya-h/zenbook-duo-2024-ux8406ma-linux
     ]))
     gcc13
     nodejs_20
@@ -130,7 +131,6 @@ in
     inotify-tools
     gnome-monitor-config 
     usbutils
-    python312Packages.pyusb
   ]) ++ (with pkgs; [
     # distrobox
     gnome-boxes
@@ -254,6 +254,12 @@ in
     dedicatedServer.openFirewall = true; # Open ports in the firewall for Source Dedicated Server
     localNetworkGameTransfers.openFirewall = true; # Open ports in the firewall for Steam Local Network Game Transfers
   };
+
+  programs.nix-ld.enable = true;
+  programs.nix-ld.libraries = with pkgs; [
+    stdenv.cc.cc
+  ];
+
 
   # This value determines the NixOS release from which the default
   # settings for stateful data, like file locations and database versions
