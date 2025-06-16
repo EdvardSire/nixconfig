@@ -113,6 +113,8 @@ in
     bruno
     libreoffice-qt6-still
     qgis-ltr
+    element-desktop
+    chromium
   ]) ++ (with pkgs; [
     (python312.withPackages (subpkgs: with subpkgs; [
       ipython
@@ -145,6 +147,10 @@ in
   virtualisation.libvirtd.enable = true;
   users.extraGroups.docker.members = [ "user" ];
 
+  programs.gnupg.agent = {
+    enable = true;
+    pinentryPackage = pkgs.pinentry-gtk2;
+  };
   programs.kdeconnect.enable = true;
   programs.neovim = {
     enable = true;
@@ -152,6 +158,7 @@ in
   };
 
   programs.ladybird.enable = true;
+  programs.chromium.enable = true;
   programs.firefox = {
     enable = true;
     languagePacks = [ "en-US" ];
