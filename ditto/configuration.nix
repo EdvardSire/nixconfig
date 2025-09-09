@@ -2,301 +2,335 @@
 # your system.  Help is available in the configuration.nix(5) man page
 # and in the NixOS manual (accessible by running ‘nixos-help’).
 
-{ config, pkgs, pkgsPersonal, winapps, ... }:
 {
-  nixpkgs.config.allowUnfree = true;
-  imports = [ 
-      ./hardware-configuration.nix
-  ];
-  nix.settings.experimental-features = [ "nix-command" "flakes" ];
-  
-  time.timeZone = "Europe/Oslo";
-  i18n.defaultLocale = "en_US.UTF-8";
+    config,
+    pkgs,
+    pkgsPersonal,
+    winapps,
+    ...
+}:
+{
+    nixpkgs.config.allowUnfree = true;
+    imports = [
+        ./hardware-configuration.nix
+    ];
+    nix.settings.experimental-features = [
+        "nix-command"
+        "flakes"
+    ];
 
-  networking = {
-    hostName = "ditto";
-    networkmanager.enable = true;
-  };
+    time.timeZone = "Europe/Oslo";
+    i18n.defaultLocale = "en_US.UTF-8";
 
-  hardware = {
-    graphics = {
-      enable = true;
-      extraPackages = with pkgs; [
-        intel-media-driver
-        vaapiIntel
-        vaapiVdpau
-        libvdpau-va-gl
-      ];
+    networking = {
+        hostName = "ditto";
+        networkmanager.enable = true;
     };
-    bluetooth = {
-      enable = true;
-      powerOnBoot = true;
-    };
-  };
 
-  security.rtkit.enable = true;
-  services = {
-      pipewire = {
-          enable = true;
-          alsa.enable = true;
-          alsa.support32Bit = true;
-          pulse.enable = true;
-      };
-      pulseaudio.enable = false;
-  };
-
-  boot = {
-    kernelPackages = pkgs.linuxPackages_6_12;
-    loader.systemd-boot.enable = true;
-    loader.efi.canTouchEfiVariables = true;
-  };
-
-  swapDevices = [{
-	  device = "/var/lib/swapfile";
-	  size = 2048;
-  }];
-
-  services.xserver = {
-    enable = true;
-    displayManager.gdm.enable = true;
-    desktopManager.gnome.enable = true;
-    xkb = {
-      layout = "us";
-      variant = "";
-    };
-    excludePackages = [ pkgs.xterm ];
-  };
-  services.xserver.videoDrivers = [ "displaylink" "modesetting" ]; # https://nixos.wiki/wiki/Displaylink
-
-  environment.sessionVariables.NIXOS_OZONE_WL = 1;
-  environment.systemPackages =
-  ([
-    # winapps.winapps
-    winapps.packages.${pkgs.system}.winapps
-  ]) ++ (with pkgs; [
-    # CLI
-    tree
-    htop
-    gitMinimal git-lfs git-filter-repo lazygit
-    wget
-    xsel
-    nmap
-    file
-    jq
-    zip
-    unzip
-    ncdu
-    rsync
-    ripgrep
-    pdftk
-    imagemagickBig
-    config.boot.kernelPackages.perf
-    vmtouch
-    fzf
-    lf
-    zoxide
-    sshfs
-    gnumake
-    batmon
-    appimage-run
-    moreutils
-  ]) ++ (with pkgs; [
-    # TERM
-    terminator
-    kdePackages.konsole
-  ]) ++ (with pkgs; [
-    # GUI
-    pkgsPersonal.legacyPackages.${pkgs.system}.sioyek
-    xournalpp
-    thunderbird
-    obsidian
-    vlc
-    eog
-    geeqie
-    feh
-    gparted
-    fido2-manage
-    bruno
-    libreoffice-qt6-still
-    qgis-ltr
-    element-desktop
-    qgroundcontrol
-    meld
-    signal-desktop
-    protonvpn-gui
-    dbeaver-bin
-    freecad
-  ]) ++ (with pkgs; [
-    (python312.withPackages (subpkgs: with subpkgs; [
-      ipython
-      numpy
-      pyusb # https://github.com/alesya-h/zenbook-duo-2024-ux8406ma-linux
-    ]))
-    gcc13
-    nodejs_20
-  ]) ++ (with pkgs; [
-    pyright
-    llvmPackages_18.clang-tools
-    vscode-langservers-extracted
-    bash-language-server
-    typescript-language-server
-    cmake-language-server
-    nil
-    nixfmt-rfc-style
-    rust-analyzer
-  ]) ++ (with pkgs; [
-    # https://github.com/alesya-h/zenbook-duo-2024-ux8406ma-linux
-    inotify-tools
-    gnome-monitor-config 
-    usbutils
-  ]) ++ (with pkgs; [
-    # distrobox
-    gnome-boxes
-    freerdp3
-  ]);
-
-  # virtualisation.podman = { enable = true; dockerCompat = true; };
-  virtualisation.docker.enable = true;
-  virtualisation.libvirtd.enable = true;
-  programs.virt-manager.enable = true;
-  users.extraGroups.docker.members = [ "user" ];
-  users.extraGroups.libvirtd.members = [ "user" ];
-  users.extraGroups.kvm.members = [ "user" ];
-
-  programs.gnupg.agent = {
-    enable = true;
-    pinentryPackage = pkgs.pinentry-gtk2;
-  };
-
-  programs.wireshark = {
-      enable = true;
-      package = pkgs.wireshark;
-      dumpcap.enable = true;
-  };
-  users.extraGroups.wireshark.members = [ "user" ];
-
-  programs.kdeconnect.enable = true;
-  programs.neovim = {
-    enable = true;
-    defaultEditor = true;
-  };
-
-  programs.ladybird.enable = true;
-  programs.chromium.enable = true;
-  programs.firefox = {
-    enable = true;
-    languagePacks = [ "en-US" ];
-    # ---- POLICIES ----
-    # Check about:policies#documentation for options.
-    policies = {
-      DisableTelemetry = true;
-      DisableFirefoxStudies = true;
-      EnableTrackingProtection = {
-        Value = true;
-        Locked = true;
-        Cryptomining = true;
-        Fingerprinting = true;
-      };
-      DisablePocket = true;
-      DisableFirefoxAccounts = true;
-      DisableAccounts = true;
-      DisableFirefoxScreenshots = true;
-      OverrideFirstRunPage = "";
-      OverridePostUpdatePage = "";
-      DontCheckDefaultBrowser = true;
-      DisplayBookmarksToolbar = "never"; # alternatives: "always" or "newtab"
-      DisplayMenuBar =
-        "default-off"; # alternatives: "always", "never" or "default-on"
-      SearchBar = "unified"; # alternative: "separate"
-      OfferToSaveLogins = false;
-
-      # ---- EXTENSIONS ----
-      # Check about:support for extension/add-on ID strings.
-      # Valid strings for installation_mode are "allowed", "blocked",
-      # "force_installed" and "normal_installed".
-      ExtensionSettings = {
-        # "*".installation_mode = "blocked"; # blocks all addons except the ones specified below
-        "uBlock0@raymondhill.net" = {
-          install_url =
-            "https://addons.mozilla.org/firefox/downloads/latest/ublock-origin/latest.xpi";
-          installation_mode = "force_installed";
+    hardware = {
+        graphics = {
+            enable = true;
+            extraPackages = with pkgs; [
+                intel-media-driver
+                vaapiIntel
+                vaapiVdpau
+                libvdpau-va-gl
+            ];
         };
-        "{446900e4-71c2-419f-a6a7-df9c091e268b}" = {
-          install_url =
-            "https://addons.mozilla.org/firefox/downloads/latest/bitwarden/latest.xpi";
-          installation_mode = "force_installed";
+        bluetooth = {
+            enable = true;
+            powerOnBoot = true;
         };
-      };
     };
-  };
 
-  services.gnome.sushi.enable = true;
-  environment.gnome.excludePackages = (with pkgs; [
-    gnome-photos
-    gnome-tour
-    gnome-connections
-    gnome-console
-    gnome-calculator
-    gnome-calendar
-    gnome-system-monitor
-    gnome-terminal
-    gnome-contacts
-    gnome-weather
-    gnome-maps
-    gnome-music
-    gnome-characters
-    tali # poker game
-    iagno # go game
-    hitori # sudoku game
-    atomix # puzzle game
-    epiphany # web browser
-    cheese # webcam tool
-    geary # email reader
-    evince # document viewer
-    totem # video player
-    yelp # gnome help
-    simple-scan # document scanner
-    file-roller
-    gedit
-  ]);
+    security.rtkit.enable = true;
+    services = {
+        pipewire = {
+            enable = true;
+            alsa.enable = true;
+            alsa.support32Bit = true;
+            pulse.enable = true;
+        };
+        pulseaudio.enable = false;
+    };
 
-  users.users.user = {
-    isNormalUser = true;
-    home = "/home/user";
-    extraGroups = [ "networkmanager" "wheel" "dialout" ];
-  };
+    boot = {
+        kernelPackages = pkgs.linuxPackages_6_12;
+        loader.systemd-boot.enable = true;
+        loader.efi.canTouchEfiVariables = true;
+    };
 
-  security.sudo = {
-    enable = true;
-    extraRules = [{
-      commands = [
+    swapDevices = [
         {
-          command = "/usr/bin/env";
-          options = [ "NOPASSWD" ];
+            device = "/var/lib/swapfile";
+            size = 2048;
         }
-      ];
-      groups = [ "wheel" ];
-    }];
-  };
+    ];
 
-  programs.steam = {
-    enable = true;
-    remotePlay.openFirewall = true; # Open ports in the firewall for Steam Remote Play
-    dedicatedServer.openFirewall = true; # Open ports in the firewall for Source Dedicated Server
-    localNetworkGameTransfers.openFirewall = true; # Open ports in the firewall for Steam Local Network Game Transfers
-  };
+    services.xserver = {
+        enable = true;
+        displayManager.gdm.enable = true;
+        desktopManager.gnome.enable = true;
+        xkb = {
+            layout = "us";
+            variant = "";
+        };
+        excludePackages = [ pkgs.xterm ];
+    };
+    services.xserver.videoDrivers = [
+        "displaylink"
+        "modesetting"
+    ]; # https://nixos.wiki/wiki/Displaylink
 
-  programs.nix-ld.enable = true;
-  programs.nix-ld.libraries = with pkgs; [
-    stdenv.cc.cc
-  ];
+    environment.sessionVariables.NIXOS_OZONE_WL = 1;
+    environment.systemPackages = ([
+        winapps.packages.${pkgs.system}.winapps
+    ])
+    ++ (with pkgs; [
+        # CLI
+        tree
+        htop
+        gitMinimal
+        git-lfs
+        git-filter-repo
+        lazygit
+        wget
+        xsel
+        nmap
+        file
+        jq
+        zip
+        unzip
+        ncdu
+        rsync
+        ripgrep
+        pdftk
+        imagemagickBig
+        config.boot.kernelPackages.perf
+        vmtouch
+        fzf
+        lf
+        zoxide
+        sshfs
+        gnumake
+        batmon
+        appimage-run
+        moreutils
+    ])
+    ++ (with pkgs; [
+        # TERM
+        terminator
+        kdePackages.konsole
+    ])
+    ++ (with pkgs; [
+        # GUI
+        pkgsPersonal.legacyPackages.${pkgs.system}.sioyek
+        xournalpp
+        thunderbird
+        obsidian
+        vlc
+        eog
+        geeqie
+        feh
+        gparted
+        fido2-manage
+        bruno
+        libreoffice-qt6-still
+        qgis-ltr
+        element-desktop
+        qgroundcontrol
+        meld
+        signal-desktop
+        protonvpn-gui
+        dbeaver-bin
+        freecad
+    ])
+    ++ (with pkgs; [
+        (python312.withPackages (
+            subpkgs: with subpkgs; [
+                ipython
+                numpy
+                pyusb # https://github.com/alesya-h/zenbook-duo-2024-ux8406ma-linux
+            ]
+        ))
+        gcc13
+        nodejs_20
+    ])
+    ++ (with pkgs; [
+        pyright
+        llvmPackages_18.clang-tools
+        vscode-langservers-extracted
+        bash-language-server
+        typescript-language-server
+        cmake-language-server
+        nil
+        nixfmt-rfc-style
+        rust-analyzer
+    ])
+    ++ (with pkgs; [
+        # https://github.com/alesya-h/zenbook-duo-2024-ux8406ma-linux
+        inotify-tools
+        gnome-monitor-config
+        usbutils
+    ])
+    ++ (with pkgs; [
+        # distrobox
+        gnome-boxes
+        freerdp3
+    ]);
 
+    # virtualisation.podman = { enable = true; dockerCompat = true; };
+    virtualisation.docker.enable = true;
+    virtualisation.libvirtd.enable = true;
+    programs.virt-manager.enable = true;
+    users.extraGroups.docker.members = [ "user" ];
+    users.extraGroups.libvirtd.members = [ "user" ];
+    users.extraGroups.kvm.members = [ "user" ];
 
-  # This value determines the NixOS release from which the default
-  # settings for stateful data, like file locations and database versions
-  # on your system were taken. It‘s perfectly fine and recommended to leave
-  # this value at the release version of the first install of this system.
-  # Before changing this value read the documentation for this option
-  # (e.g. man configuration.nix or on https://nixos.org/nixos/options.html).
-  system.stateVersion = "24.11"; # Did you read the comment?
+    services.gnome.sushi.enable = true;
+    environment.gnome.excludePackages = (
+        with pkgs;
+        [
+            gnome-photos
+            gnome-tour
+            gnome-connections
+            gnome-console
+            gnome-calculator
+            gnome-calendar
+            gnome-system-monitor
+            gnome-terminal
+            gnome-contacts
+            gnome-weather
+            gnome-maps
+            gnome-music
+            gnome-characters
+            tali # poker game
+            iagno # go game
+            hitori # sudoku game
+            atomix # puzzle game
+            epiphany # web browser
+            cheese # webcam tool
+            geary # email reader
+            evince # document viewer
+            totem # video player
+            yelp # gnome help
+            simple-scan # document scanner
+            file-roller
+            gedit
+        ]
+    );
+
+    users.users.user = {
+        isNormalUser = true;
+        home = "/home/user";
+        extraGroups = [
+            "networkmanager"
+            "wheel"
+            "dialout"
+        ];
+    };
+
+    security.sudo = {
+        enable = true;
+        extraRules = [
+            {
+                commands = [
+                    {
+                        command = "/usr/bin/env";
+                        options = [ "NOPASSWD" ];
+                    }
+                ];
+                groups = [ "wheel" ];
+            }
+        ];
+    };
+
+    programs.neovim = {
+        enable = true;
+        defaultEditor = true;
+    };
+
+    programs.wireshark = {
+        enable = true;
+        package = pkgs.wireshark;
+        dumpcap.enable = true;
+    };
+
+    users.extraGroups.wireshark.members = [ "user" ];
+    programs.gnupg.agent = {
+        enable = true;
+        pinentryPackage = pkgs.pinentry-gtk2;
+    };
+
+    # programs.kdeconnect.enable = true;
+
+    programs.ladybird.enable = true;
+
+    programs.chromium.enable = true;
+
+    programs.firefox = {
+        enable = true;
+        languagePacks = [ "en-US" ];
+        # ---- POLICIES ----
+        # Check about:policies#documentation for options.
+        policies = {
+            DisableTelemetry = true;
+            DisableFirefoxStudies = true;
+            EnableTrackingProtection = {
+                Value = true;
+                Locked = true;
+                Cryptomining = true;
+                Fingerprinting = true;
+            };
+            DisablePocket = true;
+            DisableFirefoxAccounts = true;
+            DisableAccounts = true;
+            DisableFirefoxScreenshots = true;
+            OverrideFirstRunPage = "";
+            OverridePostUpdatePage = "";
+            DontCheckDefaultBrowser = true;
+            DisplayBookmarksToolbar = "never"; # alternatives: "always" or "newtab"
+            DisplayMenuBar = "default-off"; # alternatives: "always", "never" or "default-on"
+            SearchBar = "unified"; # alternative: "separate"
+            OfferToSaveLogins = false;
+
+            # ---- EXTENSIONS ----
+            # Check about:support for extension/add-on ID strings.
+            # Valid strings for installation_mode are "allowed", "blocked",
+            # "force_installed" and "normal_installed".
+            ExtensionSettings = {
+                # "*".installation_mode = "blocked"; # blocks all addons except the ones specified below
+                "uBlock0@raymondhill.net" = {
+                    install_url = "https://addons.mozilla.org/firefox/downloads/latest/ublock-origin/latest.xpi";
+                    installation_mode = "force_installed";
+                };
+                "{446900e4-71c2-419f-a6a7-df9c091e268b}" = {
+                    install_url = "https://addons.mozilla.org/firefox/downloads/latest/bitwarden/latest.xpi";
+                    installation_mode = "force_installed";
+                };
+            };
+        };
+    };
+
+    programs.steam = {
+        enable = true;
+        remotePlay.openFirewall = true; # Open ports in the firewall for Steam Remote Play
+        dedicatedServer.openFirewall = true; # Open ports in the firewall for Source Dedicated Server
+        localNetworkGameTransfers.openFirewall = true; # Open ports in the firewall for Steam Local Network Game Transfers
+    };
+
+    programs.nix-ld = {
+        enable = true;
+        libraries = with pkgs; [
+            stdenv.cc.cc
+        ];
+    };
+
+    # This value determines the NixOS release from which the default
+    # settings for stateful data, like file locations and database versions
+    # on your system were taken. It‘s perfectly fine and recommended to leave
+    # this value at the release version of the first install of this system.
+    # Before changing this value read the documentation for this option
+    # (e.g. man configuration.nix or on https://nixos.org/nixos/options.html).
+    system.stateVersion = "24.11"; # Did you read the comment?
 }
