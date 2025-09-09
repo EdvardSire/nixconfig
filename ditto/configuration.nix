@@ -2,7 +2,7 @@
 # your system.  Help is available in the configuration.nix(5) man page
 # and in the NixOS manual (accessible by running ‘nixos-help’).
 
-{ config, pkgs, pkgsPersonal, ... }:
+{ config, pkgs, pkgsPersonal, winapps, ... }:
 {
   nixpkgs.config.allowUnfree = true;
   imports = [ 
@@ -68,19 +68,14 @@
 
   environment.sessionVariables.NIXOS_OZONE_WL = 1;
   environment.systemPackages =
-  let
-    # winapps =
-    # (import (builtins.fetchTarball "https://github.com/winapps-org/winapps/archive/main.tar.gz"))
-    # .packages."${pkgs.system}";
-  in
   ([
     # winapps.winapps
+    winapps.packages.${pkgs.system}.winapps
   ]) ++ (with pkgs; [
     # CLI
     tree
     htop
-    gitMinimal git-lfs git-filter-repo
-    lazygit
+    gitMinimal git-lfs git-filter-repo lazygit
     wget
     xsel
     nmap
