@@ -4,17 +4,16 @@
 
 { config, pkgs, ... }:
 let
-    pkgsPersonal = import (builtins.fetchTarball {
-    name = "nixpkgs-edvardsire";
-    url = "https://github.com/EdvardSire/nixpkgs/archive/dc6b3d3775457d507e130aa6f2eba582d90b23ce.tar.gz";
-    sha256 = "1r5bn10vd938c0vkah5q35rdh5zacl2hrz4dwdv6pypmz94xkjgf";
-  }) { };
+    # pkgsPersonal = import (builtins.fetchTarball {
+    # name = "nixpkgs-edvardsire";
+    # url = "https://github.com/EdvardSire/nixpkgs/archive/dc6b3d3775457d507e130aa6f2eba582d90b23ce.tar.gz";
+    # sha256 = "1r5bn10vd938c0vkah5q35rdh5zacl2hrz4dwdv6pypmz94xkjgf";
+    #   }) { };
 in
 {
   nixpkgs.config.allowUnfree = true;
   imports = [ 
       ./hardware-configuration.nix
-      ./cachix.nix
   ];
   nix.settings.experimental-features = [ "nix-command" "flakes" ];
   
@@ -52,7 +51,7 @@ in
   };
 
   boot = {
-    kernelPackages = pkgs.linuxPackages_6_11;
+    kernelPackages = pkgs.linuxPackages_6_12;
     loader.systemd-boot.enable = true;
     loader.efi.canTouchEfiVariables = true;
   };
@@ -72,12 +71,22 @@ in
     };
     excludePackages = [ pkgs.xterm ];
   };
+  services.xserver.videoDrivers = [ "displaylink" "modesetting" ]; # https://nixos.wiki/wiki/Displaylink
 
   environment.sessionVariables.NIXOS_OZONE_WL = 1;
-  environment.systemPackages = (with pkgs; [
+  environment.systemPackages =
+  let
+    # winapps =
+    # (import (builtins.fetchTarball "https://github.com/winapps-org/winapps/archive/main.tar.gz"))
+    # .packages."${pkgs.system}";
+  in
+  ([
+    # winapps.winapps
+  ]) ++ (with pkgs; [
+    # CLI
     tree
     htop
-    gitMinimal
+    gitMinimal git-lfs git-filter-repo
     lazygit
     wget
     xsel
@@ -90,17 +99,25 @@ in
     rsync
     ripgrep
     pdftk
-    imagemagick_light
+    imagemagickBig
     config.boot.kernelPackages.perf
     vmtouch
     fzf
     lf
     zoxide
+    sshfs
+    gnumake
+    batmon
+    appimage-run
+    moreutils
   ]) ++ (with pkgs; [
+    # TERM
     terminator
     kdePackages.konsole
   ]) ++ (with pkgs; [
-    pkgsPersonal.sioyek
+    # GUI
+    # pkgsPersonal.sioyek
+    sioyek
     xournalpp
     thunderbird
     obsidian
@@ -114,7 +131,12 @@ in
     libreoffice-qt6-still
     qgis-ltr
     element-desktop
-    chromium
+    qgroundcontrol
+    meld
+    signal-desktop
+    protonvpn-gui
+    dbeaver-bin
+    freecad
   ]) ++ (with pkgs; [
     (python312.withPackages (subpkgs: with subpkgs; [
       ipython
@@ -128,6 +150,11 @@ in
     llvmPackages_18.clang-tools
     vscode-langservers-extracted
     bash-language-server
+    typescript-language-server
+    cmake-language-server
+    nil
+    nixfmt-rfc-style
+    rust-analyzer
   ]) ++ (with pkgs; [
     # https://github.com/alesya-h/zenbook-duo-2024-ux8406ma-linux
     inotify-tools
@@ -139,18 +166,26 @@ in
     freerdp3
   ]);
 
-  # virtualisation.podman = {
-  #   enable = true;
-  #   dockerCompat = true;
-  # };
+  # virtualisation.podman = { enable = true; dockerCompat = true; };
   virtualisation.docker.enable = true;
   virtualisation.libvirtd.enable = true;
+  programs.virt-manager.enable = true;
   users.extraGroups.docker.members = [ "user" ];
+  users.extraGroups.libvirtd.members = [ "user" ];
+  users.extraGroups.kvm.members = [ "user" ];
 
   programs.gnupg.agent = {
     enable = true;
     pinentryPackage = pkgs.pinentry-gtk2;
   };
+
+  programs.wireshark = {
+      enable = true;
+      package = pkgs.wireshark;
+      dumpcap.enable = true;
+  };
+  users.extraGroups.wireshark.members = [ "user" ];
+
   programs.kdeconnect.enable = true;
   programs.neovim = {
     enable = true;
@@ -239,7 +274,7 @@ in
   users.users.user = {
     isNormalUser = true;
     home = "/home/user";
-    extraGroups = [ "networkmanager" "wheel" ];
+    extraGroups = [ "networkmanager" "wheel" "dialout" ];
   };
 
   security.sudo = {
