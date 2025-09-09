@@ -19,7 +19,7 @@
   };
 
   hardware = {
-    opengl = {
+    graphics = {
       enable = true;
       extraPackages = with pkgs; [
         intel-media-driver
@@ -32,15 +32,17 @@
       enable = true;
       powerOnBoot = true;
     };
-    pulseaudio.enable = false;
   };
 
   security.rtkit.enable = true;
-  services.pipewire = {
-    enable = true;
-    alsa.enable = true;
-    alsa.support32Bit = true;
-    pulse.enable = true;
+  services = {
+      pipewire = {
+          enable = true;
+          alsa.enable = true;
+          alsa.support32Bit = true;
+          pulse.enable = true;
+      };
+      pulseaudio.enable = false;
   };
 
   boot = {
