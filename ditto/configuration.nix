@@ -2,14 +2,7 @@
 # your system.  Help is available in the configuration.nix(5) man page
 # and in the NixOS manual (accessible by running ‘nixos-help’).
 
-{ config, pkgs, ... }:
-let
-    # pkgsPersonal = import (builtins.fetchTarball {
-    # name = "nixpkgs-edvardsire";
-    # url = "https://github.com/EdvardSire/nixpkgs/archive/dc6b3d3775457d507e130aa6f2eba582d90b23ce.tar.gz";
-    # sha256 = "1r5bn10vd938c0vkah5q35rdh5zacl2hrz4dwdv6pypmz94xkjgf";
-    #   }) { };
-in
+{ config, pkgs, pkgsPersonal, ... }:
 {
   nixpkgs.config.allowUnfree = true;
   imports = [ 
@@ -116,8 +109,7 @@ in
     kdePackages.konsole
   ]) ++ (with pkgs; [
     # GUI
-    # pkgsPersonal.sioyek
-    sioyek
+    pkgsPersonal.legacyPackages.${pkgs.system}.sioyek
     xournalpp
     thunderbird
     obsidian

@@ -16,9 +16,26 @@
         "type": "github"
       }
     },
+    "pkgsPersonal": {
+      "locked": {
+        "lastModified": 1732709664,
+        "narHash": "sha256-7snZSfr1+mt24438DAVl6hfYchm4QDU3YGiktkGwq+Q=",
+        "owner": "EdvardSire",
+        "repo": "nixpkgs",
+        "rev": "dc6b3d3775457d507e130aa6f2eba582d90b23ce",
+        "type": "github"
+      },
+      "original": {
+        "owner": "EdvardSire",
+        "repo": "nixpkgs",
+        "rev": "dc6b3d3775457d507e130aa6f2eba582d90b23ce",
+        "type": "github"
+      }
+    },
     "root": {
       "inputs": {
-        "nixpkgs": "nixpkgs"
+        "nixpkgs": "nixpkgs",
+        "pkgsPersonal": "pkgsPersonal"
       }
     }
   },
