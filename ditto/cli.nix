@@ -1,0 +1,36 @@
+{
+  pkgs,
+  config
+}:
+with pkgs; [
+  tree
+  htop
+  gitMinimal
+  git-lfs
+  git-filter-repo
+  lazygit
+  wget
+  xsel
+  nmap
+  file
+  jq
+  zip
+  unzip
+  ncdu
+  rsync
+  ripgrep
+  pdftk
+  imagemagickBig
+  config.boot.kernelPackages.perf
+  vmtouch
+  fzf
+  lf
+  zoxide
+  sshfs
+  gnumake
+  batmon
+  appimage-run
+  moreutils
+  attic-client
+  v4l-utils
+]

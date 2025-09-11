@@ -1,0 +1,28 @@
+{
+  pkgs,
+  pkgsPersonal
+}:
+with pkgs; [
+  pkgsPersonal.legacyPackages.${pkgs.system}.sioyek
+  xournalpp
+  thunderbird
+  obsidian
+  vlc
+  eog
+  geeqie
+  feh
+  gparted
+  fido2-manage
+  bruno
+  libreoffice-qt6-still
+  qgis-ltr
+  element-desktop
+  qgroundcontrol
+  meld
+  signal-desktop
+  protonvpn-gui
+  dbeaver-bin
+  freecad
+  camset
+  looking-glass-client
+]

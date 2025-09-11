@@ -9,15 +9,26 @@
     winapps,
     ...
 }:
+    let
+      # IOMMU Group 19 0000:2d:00.0 VGA compatible controller [0300]: NVIDIA Corporation GP104 [GeForce GTX 1080] [10de:1b80] (rev a1)
+      # IOMMU Group 19 0000:2d:00.1 Audio device [0403]: NVIDIA Corporation GP104 High Definition Audio Controller [10de:10f0] (rev a1)
+
+      # Change this to your username.
+      user = "user";
+      # Change this to match your system's CPU.
+      platform = "intel";
+      # Change this to specify the IOMMU ids you wrote down earlier.
+      vfioIds = [ "10de:1b80" "10de:10f0" ];
+    in
 {
     nixpkgs.config.allowUnfree = true;
-    imports = [
-        ./hardware-configuration.nix
-    ];
-    nix.settings.experimental-features = [
-        "nix-command"
-        "flakes"
-    ];
+    imports = [ ./hardware-configuration.nix ];
+    nix.settings = {
+        experimental-features = [ "nix-command" "flakes" ];
+        substituters = [ "https://attic.endurance-robotics.com/test-1" ];
+        trusted-public-keys = [ "test-1:01LhQktwt4ndXCqA7C/4lyTAMl3fkfrFtFqlWXYxGzQ=" ];
+        trusted-users = [ "user"];
+    };
 
     time.timeZone = "Europe/Oslo";
     i18n.defaultLocale = "en_US.UTF-8";
@@ -28,6 +39,10 @@
     };
 
     hardware = {
+        bluetooth = {
+            enable = true;
+            powerOnBoot = true;
+        };
         graphics = {
             enable = true;
             extraPackages = with pkgs; [
@@ -37,10 +52,7 @@
                 libvdpau-va-gl
             ];
         };
-        bluetooth = {
-            enable = true;
-            powerOnBoot = true;
-        };
+
     };
 
     security.rtkit.enable = true;
@@ -59,6 +71,46 @@
         loader.systemd-boot.enable = true;
         loader.efi.canTouchEfiVariables = true;
     };
+    # Configure kernel options to make sure IOMMU & KVM support is on.
+    boot = {
+      kernelModules = [ "kvm-${platform}" "vfio_virqfd" "vfio_pci" "vfio_iommu_type1" "vfio" ];
+      kernelParams = [ "${platform}_iommu=on" "${platform}_iommu=pt" "kvm.ignore_msrs=1" ];
+      extraModprobeConfig = "options vfio-pci ids=${builtins.concatStringsSep "," vfioIds}";
+    };
+
+    # Add a file for looking-glass to use later. This will allow for viewing the guest VM's screen in a
+    # performant way.
+    systemd.tmpfiles.rules = [
+      "f /dev/shm/looking-glass 0660 ${user} kvm -"
+    ];
+      # Enable virtualisation programs. These will be used by virt-manager to run your VM.
+    virtualisation = {
+       libvirtd = {
+         enable = true;
+         # extraConfig = ''
+         #   user="${user}"
+         # '';
+
+         # Don't start any VMs automatically on boot.
+         onBoot = "ignore";
+         # Stop all running VMs on shutdown.
+         onShutdown = "shutdown";
+
+         qemu = {
+           # package = pkgs.qemu_kvm;
+           # ovmf.enable = true;
+           # verbatimConfig = ''
+           #    namespaces = []
+           #   user = "+${builtins.toString config.users.users.${user}.uid}"
+           # '';
+         };
+      };
+    };
+    programs.virt-manager.enable = true;
+    users.extraGroups.qemu-libvirtd.members = [ user ];
+    users.extraGroups.libvirtd.members = [ user ];
+    users.extraGroups.disk.members = [ user ];
+
 
     swapDevices = [
         {
@@ -77,73 +129,22 @@
         };
         excludePackages = [ pkgs.xterm ];
     };
+    
+    hardware.nvidia.open = false;
     services.xserver.videoDrivers = [
-        "displaylink"
-        "modesetting"
-    ]; # https://nixos.wiki/wiki/Displaylink
+        "nvidia"
+    ]; 
 
     environment.sessionVariables.NIXOS_OZONE_WL = 1;
     environment.systemPackages = ([
         winapps.packages.${pkgs.system}.winapps
     ])
-    ++ (with pkgs; [
-        # CLI
-        tree
-        htop
-        gitMinimal
-        git-lfs
-        git-filter-repo
-        lazygit
-        wget
-        xsel
-        nmap
-        file
-        jq
-        zip
-        unzip
-        ncdu
-        rsync
-        ripgrep
-        pdftk
-        imagemagickBig
-        config.boot.kernelPackages.perf
-        vmtouch
-        fzf
-        lf
-        zoxide
-        sshfs
-        gnumake
-        batmon
-        appimage-run
-        moreutils
-    ])
+    ++ (import ./cli.nix { inherit pkgs config; }) 
+    ++ (import ./gui.nix { inherit pkgs pkgsPersonal;})
     ++ (with pkgs; [
         # TERM
         terminator
         kdePackages.konsole
-    ])
-    ++ (with pkgs; [
-        # GUI
-        pkgsPersonal.legacyPackages.${pkgs.system}.sioyek
-        xournalpp
-        thunderbird
-        obsidian
-        vlc
-        eog
-        geeqie
-        feh
-        gparted
-        fido2-manage
-        bruno
-        libreoffice-qt6-still
-        qgis-ltr
-        element-desktop
-        qgroundcontrol
-        meld
-        signal-desktop
-        protonvpn-gui
-        dbeaver-bin
-        freecad
     ])
     ++ (with pkgs; [
         (python312.withPackages (
@@ -180,12 +181,12 @@
     ]);
 
     # virtualisation.podman = { enable = true; dockerCompat = true; };
-    virtualisation.docker.enable = true;
-    virtualisation.libvirtd.enable = true;
-    programs.virt-manager.enable = true;
-    users.extraGroups.docker.members = [ "user" ];
-    users.extraGroups.libvirtd.members = [ "user" ];
-    users.extraGroups.kvm.members = [ "user" ];
+    # virtualisation.docker.enable = true;
+    # virtualisation.libvirtd.enable = true;
+    # programs.virt-manager.enable = true;
+    # users.extraGroups.docker.members = [ "user" ];
+    # users.extraGroups.libvirtd.members = [ "user" ];
+    # users.extraGroups.kvm.members = [ "user" ];
 
     services.gnome.sushi.enable = true;
     environment.gnome.excludePackages = (
