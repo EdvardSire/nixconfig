@@ -33,4 +33,5 @@ with pkgs; [
   moreutils
   attic-client
   v4l-utils
+  pciutils
 ]

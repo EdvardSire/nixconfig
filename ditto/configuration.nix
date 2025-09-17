@@ -76,6 +76,7 @@ in
     kernelPackages = pkgs.linuxPackages_6_12;
     loader.systemd-boot.enable = true;
     loader.efi.canTouchEfiVariables = true;
+    binfmt.emulatedSystems = [ "aarch64-linux" ];
   };
 
   # Configure kernel options to make sure IOMMU & KVM support is on.
