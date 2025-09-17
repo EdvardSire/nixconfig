@@ -34,4 +34,5 @@ with pkgs; [
   attic-client
   v4l-utils
   pciutils
+  nixfmt-rfc-style
 ]

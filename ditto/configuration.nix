@@ -130,17 +130,6 @@ in
     nodejs_20
   ])
   ++ (with pkgs; [
-    pyright
-    llvmPackages_18.clang-tools
-    vscode-langservers-extracted
-    bash-language-server
-    typescript-language-server
-    cmake-language-server
-    nil
-    nixfmt-rfc-style
-    rust-analyzer
-  ])
-  ++ (with pkgs; [
     # https://github.com/alesya-h/zenbook-duo-2024-ux8406ma-linux
     inotify-tools
     gnome-monitor-config
