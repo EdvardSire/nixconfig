@@ -80,21 +80,21 @@ in
   };
 
   # Configure kernel options to make sure IOMMU & KVM support is on.
-  boot = {
-    kernelModules = [
-      "kvm-${platform}"
-      "vfio_virqfd"
-      "vfio_pci"
-      "vfio_iommu_type1"
-      "vfio"
-    ];
-    kernelParams = [
-      "${platform}_iommu=on"
-      "${platform}_iommu=pt"
-      "kvm.ignore_msrs=1"
-    ];
-    extraModprobeConfig = "options vfio-pci ids=${builtins.concatStringsSep "," vfioIds}";
-  };
+  # boot = {
+  #   kernelModules = [
+  #     "kvm-${platform}"
+  #     "vfio_virqfd"
+  #     "vfio_pci"
+  #     "vfio_iommu_type1"
+  #     "vfio"
+  #   ];
+  #   kernelParams = [
+  #     "${platform}_iommu=on"
+  #     "${platform}_iommu=pt"
+  #     "kvm.ignore_msrs=1"
+  #   ];
+  #   extraModprobeConfig = "options vfio-pci ids=${builtins.concatStringsSep "," vfioIds}";
+  # };
 
   systemd.tmpfiles.rules = [
     "f /dev/shm/looking-glass 0660 ${user} kvm -"
