@@ -7,6 +7,7 @@
   pkgs,
   pkgsPersonal,
   winapps,
+  edvard-neovim,
   ...
 }:
 let
@@ -139,6 +140,9 @@ in
     # distrobox
     gnome-boxes
     freerdp3
+  ])
+  ++ (with pkgs; [
+    edvard-neovim.packages.${system}.neovim
   ]);
 
   users.users.user = {
@@ -192,7 +196,6 @@ in
   # programs.kdeconnect.enable = true;
 
   programs.neovim = {
-    enable = true;
     defaultEditor = true;
   };
 

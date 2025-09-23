@@ -1,5 +1,25 @@
 {
   "nodes": {
+    "edvard-neovim": {
+      "inputs": {
+        "nixpkgs": [
+          "nixpkgs"
+        ]
+      },
+      "locked": {
+        "lastModified": 1758647043,
+        "narHash": "sha256-x8R0bPhQTpG+2lOkEoQ61r2L0eSJ5eBfWrk083mBqW8=",
+        "owner": "edvardsire",
+        "repo": "dotfiles",
+        "rev": "d5a85f9469df6c17b5498273b0861aaff5b287b7",
+        "type": "github"
+      },
+      "original": {
+        "owner": "edvardsire",
+        "repo": "dotfiles",
+        "type": "github"
+      }
+    },
     "flake-compat": {
       "locked": {
         "lastModified": 1696426674,
@@ -81,6 +101,7 @@
     },
     "root": {
       "inputs": {
+        "edvard-neovim": "edvard-neovim",
         "nixpkgs": "nixpkgs",
         "pkgsPersonal": "pkgsPersonal",
         "winapps": "winapps"

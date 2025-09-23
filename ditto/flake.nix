@@ -6,6 +6,10 @@
       url = "github:winapps-org/winapps";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+    edvard-neovim = {
+      url = "github:edvardsire/dotfiles";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
   outputs = { self, nixpkgs, ... }@attrs: {
     nixosConfigurations.ditto = nixpkgs.lib.nixosSystem {
