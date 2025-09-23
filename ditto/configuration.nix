@@ -7,7 +7,7 @@
   pkgs,
   pkgsPersonal,
   winapps,
-  edvard-neovim,
+  edvard-dotfiles,
   ...
 }:
 let
@@ -142,7 +142,8 @@ in
     freerdp3
   ])
   ++ (with pkgs; [
-    edvard-neovim.packages.${system}.neovim
+    edvard-dotfiles.packages.${system}.neovim
+    edvard-dotfiles.packages.${system}.q-cli
   ]);
 
   users.users.user = {

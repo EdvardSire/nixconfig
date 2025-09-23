@@ -6,7 +6,7 @@
       url = "github:winapps-org/winapps";
       inputs.nixpkgs.follows = "nixpkgs";
     };
-    edvard-neovim = {
+    edvard-dotfiles = {
       url = "github:edvardsire/dotfiles";
       inputs.nixpkgs.follows = "nixpkgs";
     };

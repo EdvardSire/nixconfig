@@ -1,17 +1,17 @@
 {
   "nodes": {
-    "edvard-neovim": {
+    "edvard-dotfiles": {
       "inputs": {
         "nixpkgs": [
           "nixpkgs"
         ]
       },
       "locked": {
-        "lastModified": 1758647043,
-        "narHash": "sha256-x8R0bPhQTpG+2lOkEoQ61r2L0eSJ5eBfWrk083mBqW8=",
+        "lastModified": 1758649015,
+        "narHash": "sha256-oZFgHTVCEf+dyiQeW7rO5WsHt8AKKXv7x7IuSyKhhFY=",
         "owner": "edvardsire",
         "repo": "dotfiles",
-        "rev": "d5a85f9469df6c17b5498273b0861aaff5b287b7",
+        "rev": "4106430d34ab012cc723d2da266e1cefac8b462c",
         "type": "github"
       },
       "original": {
@@ -101,7 +101,7 @@
     },
     "root": {
       "inputs": {
-        "edvard-neovim": "edvard-neovim",
+        "edvard-dotfiles": "edvard-dotfiles",
         "nixpkgs": "nixpkgs",
         "pkgsPersonal": "pkgsPersonal",
         "winapps": "winapps"
