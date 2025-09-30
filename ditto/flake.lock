@@ -83,19 +83,19 @@
         "type": "github"
       }
     },
-    "pkgsPersonal": {
+    "nixpkgs-unstable": {
       "locked": {
-        "lastModified": 1732709664,
-        "narHash": "sha256-7snZSfr1+mt24438DAVl6hfYchm4QDU3YGiktkGwq+Q=",
-        "owner": "EdvardSire",
+        "lastModified": 1759036355,
+        "narHash": "sha256-0m27AKv6ka+q270dw48KflE0LwQYrO7Fm4/2//KCVWg=",
+        "owner": "NixOS",
         "repo": "nixpkgs",
-        "rev": "dc6b3d3775457d507e130aa6f2eba582d90b23ce",
+        "rev": "e9f00bd893984bc8ce46c895c3bf7cac95331127",
         "type": "github"
       },
       "original": {
-        "owner": "EdvardSire",
+        "owner": "NixOS",
+        "ref": "nixos-unstable",
         "repo": "nixpkgs",
-        "rev": "dc6b3d3775457d507e130aa6f2eba582d90b23ce",
         "type": "github"
       }
     },
@@ -103,7 +103,7 @@
       "inputs": {
         "edvard-dotfiles": "edvard-dotfiles",
         "nixpkgs": "nixpkgs",
-        "pkgsPersonal": "pkgsPersonal",
+        "nixpkgs-unstable": "nixpkgs-unstable",
         "winapps": "winapps"
       }
     },

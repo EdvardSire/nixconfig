@@ -5,8 +5,8 @@
 {
   config,
   pkgs,
-  pkgsPersonal,
   winapps,
+  nixpkgs-unstable,
   edvard-dotfiles,
   ...
 }:
@@ -113,7 +113,7 @@ in
     winapps.packages.${pkgs.system}.winapps
   ])
   ++ (import ./cli.nix { inherit pkgs config; })
-  ++ (import ./gui.nix { inherit pkgs pkgsPersonal; })
+  ++ (import ./gui.nix { inherit pkgs;  })
   ++ (with pkgs; [
     # TERM
     terminator
@@ -144,6 +144,8 @@ in
   ++ (with pkgs; [
     edvard-dotfiles.packages.${system}.neovim
     edvard-dotfiles.packages.${system}.q-cli
+    nixpkgs-unstable.legacyPackages.${system}.rerun
+    nixpkgs-unstable.legacyPackages.${system}.sioyek
   ]);
 
   users.users.user = {
@@ -223,7 +225,7 @@ in
 
   programs.ladybird.enable = true;
 
-  programs.chromium.enable = true;
+  # programs.chromium.enable = true;
 
   programs.firefox = {
     enable = true;

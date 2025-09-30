@@ -1,9 +1,8 @@
 {
   pkgs,
-  pkgsPersonal
 }:
-with pkgs; [
-  pkgsPersonal.legacyPackages.${pkgs.system}.sioyek
+with pkgs;
+[
   xournalpp
   thunderbird
   obsidian
@@ -25,4 +24,12 @@ with pkgs; [
   freecad
   camset
   looking-glass-client
+  tigervnc
+  (octaveFull.withPackages (
+    opkgs: with opkgs; [
+      control
+    ]
+  ))
+  kdePackages.kcachegrind
+  ungoogled-chromium
 ]
