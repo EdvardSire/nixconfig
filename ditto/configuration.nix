@@ -5,6 +5,7 @@
 {
   config,
   pkgs,
+  pkgsPersonal,
   winapps,
   nixpkgs-unstable,
   edvard-dotfiles,
@@ -57,6 +58,7 @@ in
         vaapiIntel
         vaapiVdpau
         libvdpau-va-gl
+        intel-compute-runtime # opencl
       ];
     };
 
@@ -78,6 +80,7 @@ in
     loader.systemd-boot.enable = true;
     loader.efi.canTouchEfiVariables = true;
     binfmt.emulatedSystems = [ "aarch64-linux" ];
+    extraModulePackages = with config.boot.kernelPackages; [ rtw88 ]; # usb wifi device
   };
 
   # Configure kernel options to make sure IOMMU & KVM support is on.
@@ -101,6 +104,9 @@ in
     "f /dev/shm/looking-glass 0660 ${user} kvm -"
   ];
 
+  virtualisation.docker.enable = true;
+  users.extraGroups.docker.members = [ user ];
+
   virtualisation.libvirtd.enable = true;
   programs.virt-manager.enable = true;
   users.extraGroups.libvirtd.members = [ user ];
@@ -122,8 +128,7 @@ in
   ++ (with pkgs; [
     (python312.withPackages (
       subpkgs: with subpkgs; [
-        ipython
-        numpy
+        ipython numpy matplotlib # for ipython3 --pylab
         pyusb # https://github.com/alesya-h/zenbook-duo-2024-ux8406ma-linux
       ]
     ))
@@ -225,51 +230,65 @@ in
 
   programs.ladybird.enable = true;
 
-  # programs.chromium.enable = true;
-
   programs.firefox = {
     enable = true;
-    languagePacks = [ "en-US" ];
-    # ---- POLICIES ----
-    # Check about:policies#documentation for options.
+    package = pkgs.librewolf;
     policies = {
       DisableTelemetry = true;
       DisableFirefoxStudies = true;
-      EnableTrackingProtection = {
-        Value = true;
-        Locked = true;
-        Cryptomining = true;
-        Fingerprinting = true;
-      };
-      DisablePocket = true;
-      DisableFirefoxAccounts = true;
-      DisableAccounts = true;
-      DisableFirefoxScreenshots = true;
-      OverrideFirstRunPage = "";
-      OverridePostUpdatePage = "";
-      DontCheckDefaultBrowser = true;
-      DisplayBookmarksToolbar = "never"; # alternatives: "always" or "newtab"
-      DisplayMenuBar = "default-off"; # alternatives: "always", "never" or "default-on"
-      SearchBar = "unified"; # alternative: "separate"
-      OfferToSaveLogins = false;
+      Preferences = {
+        # "bad" settings
+        "webgl.disabled" = false;
+        "privacy.clearOnShutdown_v2.cookiesAndStorage" = false;
 
-      # ---- EXTENSIONS ----
-      # Check about:support for extension/add-on ID strings.
-      # Valid strings for installation_mode are "allowed", "blocked",
-      # "force_installed" and "normal_installed".
+        "privacy.donottrackheader.enabled" = true;
+        "cookiebanners.service.mode.privateBrowsing" = 2; # Block cookie banners in private browsing
+        "cookiebanners.service.mode" = 2; # Block cookie banners
+        "privacy.fingerprintingProtection" = true;
+        "privacy.resistFingerprinting" = true;
+        "privacy.trackingprotection.emailtracking.enabled" = true;
+        "privacy.trackingprotection.enabled" = true;
+        "privacy.trackingprotection.fingerprinting.enabled" = true;
+        "privacy.trackingprotection.socialtracking.enabled" = true;
+      };
       ExtensionSettings = {
-        # "*".installation_mode = "blocked"; # blocks all addons except the ones specified below
+        "jid1-ZAdIEUB7XOzOJw@jetpack" = {
+          install_url = "https://addons.mozilla.org/firefox/downloads/latest/duckduckgo-for-firefox/latest.xpi";
+          installation_mode = "force_installed";
+        };
         "uBlock0@raymondhill.net" = {
           install_url = "https://addons.mozilla.org/firefox/downloads/latest/ublock-origin/latest.xpi";
           installation_mode = "force_installed";
         };
         "{446900e4-71c2-419f-a6a7-df9c091e268b}" = {
-          install_url = "https://addons.mozilla.org/firefox/downloads/latest/bitwarden/latest.xpi";
+          install_url = "https://addons.mozilla.org/firefox/downloads/latest/bitwarden-password-manager/latest.xpi";
+          installation_mode = "force_installed";
+        };
+        "addon@darkreader.org" = {
+          install_url = "https://addons.mozilla.org/firefox/downloads/latest/darkreader/latest.xpi";
+          installation_mode = "force_installed";
+        };
+        "@testpilot-containers" = {
+          install_url = "https://addons.mozilla.org/firefox/downloads/latest/multi-account-containers/latest.xpi";
+          installation_mode = "force_installed";
+        };
+        "headereditor-amo@addon.firefoxcn.net" = {
+          install_url = "https://addons.mozilla.org/firefox/downloads/latest/header-editor/latest.xpi";
+          installation_mode = "force_installed";
+        };
+        "dfyoutube@example.com" = {
+          install_url = "https://addons.mozilla.org/firefox/downloads/latest/df-youtube/latest.xpi";
+          installation_mode = "force_installed";
+        };
+        "nb-NO@dictionaries.addons.mozilla.org" = {
+          install_url = "https://addons.mozilla.org/firefox/downloads/latest/norsk-bokmål-ordliste/latest.xpi";
           installation_mode = "force_installed";
         };
       };
     };
   };
+
+  environment.etc."firefox/policies/policies.json".target = "librewolf/policies/policies.json";
 
   services.gnome.sushi.enable = true;
   environment.gnome.excludePackages = (
@@ -311,4 +330,19 @@ in
   # Before changing this value read the documentation for this option
   # (e.g. man configuration.nix or on https://nixos.org/nixos/options.html).
   system.stateVersion = "24.11"; # Did you read the comment?
+
+
+
+
+
+
+
+services.printing.enable = true;
+services.avahi = {
+  enable = true;
+  nssmdns4 = true;
+  openFirewall = true;
+};
+
+
 }
