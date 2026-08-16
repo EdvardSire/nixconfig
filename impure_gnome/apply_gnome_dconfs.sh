@@ -29,3 +29,10 @@ dconf write /org/gnome/desktop/interface/clock-show-seconds true
 
 dconf write /org/gnome/desktop/calendar/show-weekdate true
 #https://github.com/F-i-f/weeks-start-on-monday
+
+
+# autohide dock/sidebar
+dconf write /org/gnome/shell/extensions/dash-to-dock/dock-fixed false
+dconf write /org/gnome/shell/extensions/dash-to-dock/intellihide false
+dconf write /org/gnome/shell/extensions/dash-to-dock/autohide true
+
